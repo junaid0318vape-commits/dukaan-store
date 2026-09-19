@@ -1,0 +1,38 @@
+{% extends 'store/base.html' %}
+{% block title %}Aapka Cart{% endblock %}
+{% block content %}
+<div class="container">
+<h1 style="color:#fff;margin-bottom:24px;">Aapka Cart</h1>
+
+{% if cart_items %}
+  {% for item in cart_items %}
+    <div class="cart-row">
+      <div class="thumb">
+        {% if item.product.photo_url %}<img src="{{ item.product.photo_url }}" alt="">{% else %}{{ item.product.icon }}{% endif %}
+      </div>
+      <div class="info">
+        <div class="name">{{ item.product.name }}</div>
+        <div class="price">Rs {{ item.price }} x {{ item.quantity }} = Rs {{ item.subtotal }}</div>
+      </div>
+      <form action="{% url 'update_cart' item.product.id %}" method="post" class="qty-form">
+        {% csrf_token %}
+        <input type="number" name="quantity" value="{{ item.quantity }}" min="1">
+        <button type="submit" class="btn-outline" style="width:auto;padding:0 16px;">Update</button>
+      </form>
+      <form action="{% url 'remove_from_cart' item.product.id %}" method="post">
+        {% csrf_token %}
+        <button type="submit" class="btn-outline" style="width:auto;padding:0 16px;border-color:var(--coral);color:#E8697A;">Remove</button>
+      </form>
+    </div>
+  {% endfor %}
+
+  <div class="cart-total">
+    <span>Total</span>
+    <span>Rs {{ cart_total }}</span>
+  </div>
+  <a href="{% url 'checkout' %}" class="btn-fill" style="display:flex;">Checkout Karein</a>
+{% else %}
+  <p>Cart khali hai. <a href="{% url 'home' %}" style="color:var(--gold);font-weight:600;">Shopping shuru karein</a>.</p>
+{% endif %}
+</div>
+{% endblock %}

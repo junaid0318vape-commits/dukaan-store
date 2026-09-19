@@ -1,0 +1,257 @@
+{% extends 'store/base.html' %}
+{% block title %}Dukaan — Shop{% endblock %}
+{% block content %}
+
+<section class="hero" id="heroCarousel">
+  <div class="hero-slide active" data-i="0">
+    <img src="https://picsum.photos/seed/hero-sneakers-v2/1600/900" alt="">
+    <div class="hero-copy">
+      <div class="hero-eyebrow">Naya Collection</div>
+      <h1>Style jo har waqt saath de.</h1>
+      <p>Shoes, watches aur mobile accessories — sab ek hi jaga, behtareen daamon mein.</p>
+      <a class="hero-cta" href="#shop">Shop Now</a>
+    </div>
+  </div>
+  <div class="hero-slide" data-i="1">
+    <img src="https://picsum.photos/seed/hero-watches-v2/1600/900" alt="">
+    <div class="hero-copy">
+      <div class="hero-eyebrow">Watches Collection</div>
+      <h1>Waqt ko style ke sath jiyein.</h1>
+      <p>Chronograph se le kar smart fitness watches tak — har kalai ke liye kuch na kuch.</p>
+      <a class="hero-cta" href="{% url 'category_page' 'watches' %}">Watches Dekhein</a>
+    </div>
+  </div>
+  <div class="hero-slide" data-i="2">
+    <img src="https://picsum.photos/seed/hero-sale-v2/1600/900" alt="">
+    <div class="hero-copy">
+      <div class="hero-eyebrow">Sale — 30% Off</div>
+      <h1>Naye season ka bara discount.</h1>
+      <p>Muntakhib shoes aur accessories par season ka sabse bara offer.</p>
+      <a class="hero-cta" href="#shop">Sale Dekhein</a>
+    </div>
+  </div>
+
+  <button class="hero-arrow prev" onclick="heroPrev()">‹</button>
+  <button class="hero-arrow next" onclick="heroNext()">›</button>
+  <div class="hero-dots" id="heroDots">
+    <button class="hero-dot active" onclick="heroGo(0)"></button>
+    <button class="hero-dot" onclick="heroGo(1)"></button>
+    <button class="hero-dot" onclick="heroGo(2)"></button>
+  </div>
+</section>
+
+<div class="trust-strip">
+  <div class="trust-item"><div class="ic">💎</div><div class="lb">Premium</div></div>
+  <div class="trust-item"><div class="ic">✨</div><div class="lb">Elegant</div></div>
+  <div class="trust-item"><div class="ic">✔️</div><div class="lb">Certified</div></div>
+  <div class="trust-item"><div class="ic">🛡️</div><div class="lb">Warranty</div></div>
+</div>
+
+<div class="section" style="padding-bottom:0;">
+  <div class="promo-grid">
+    <a class="promo-card" href="{% url 'category_page' 'shoes' %}">
+      <img src="https://picsum.photos/seed/promo-shoes-v2/600/600" alt="">
+      <div class="promo-copy"><h3>Sneakers That Move With You, Comfortable &amp; Durable</h3><span>Find Your Fit</span></div>
+    </a>
+    <a class="promo-card" href="{% url 'category_page' 'watches' %}">
+      <img src="https://picsum.photos/seed/promo-watches-v2/600/600" alt="">
+      <div class="promo-copy"><h3>Fresh Drops. Iconic Watches That Speak Before You Do</h3><span>Get Your Pair</span></div>
+    </a>
+    <a class="promo-card" href="{% url 'category_page' 'mobile-accessories' %}">
+      <img src="https://picsum.photos/seed/promo-acc-v2/600/600" alt="">
+      <div class="promo-copy"><h3>Style-Stack Your Everyday Carry</h3><span>Shop Accessories</span></div>
+    </a>
+  </div>
+</div>
+
+<div class="countdown">
+  <div class="countdown-inner">
+    <div class="countdown-tag">SAVE 30% — DIGITAL WATCH</div>
+    <div class="countdown-timer" id="countdownTimer">
+      <div><span class="num" id="cdD">--</span><span class="unit">Din</span></div>
+      <div><span class="num" id="cdH">--</span><span class="unit">Ghantay</span></div>
+      <div><span class="num" id="cdM">--</span><span class="unit">Minute</span></div>
+      <div><span class="num" id="cdS">--</span><span class="unit">Second</span></div>
+    </div>
+  </div>
+</div>
+
+<div class="section" id="shop">
+  <div class="section-head">
+    <h2>Newly Dropped Collections</h2>
+    <p>These items drop to timeless classics, we bring you authentic products built for style and comfort.</p>
+    <div class="rule"></div>
+  </div>
+
+  <div class="tabs">
+    <a href="{% url 'home' %}" class="tab {% if not active_category %}active{% endif %}">Sab Kuch</a>
+    {% for cat in categories %}
+      <a href="?category={{ cat.slug }}" class="tab {% if active_category.slug == cat.slug %}active{% endif %}">{{ cat.name }}</a>
+    {% endfor %}
+  </div>
+
+  <div class="grid">
+    {% for product in products %}
+      <div class="card">
+        {% if product.is_new %}<span class="card-badge">NEW</span>{% endif %}
+        <a href="{{ product.get_absolute_url }}">
+          <div class="card-img">
+            {% if product.photo_url %}<img src="{{ product.photo_url }}" alt="{{ product.name }}">{% else %}{{ product.icon }}{% endif %}
+          </div>
+        </a>
+        <div class="card-body">
+          <span class="card-cat">{{ product.category.name }}</span>
+          <a href="{{ product.get_absolute_url }}" class="card-name">{{ product.name }}</a>
+          <span class="card-price">Rs {{ product.price }}</span>
+          <div class="btn-row">
+            <form action="{% url 'add_to_cart' product.id %}" method="post">
+              {% csrf_token %}
+              <input type="hidden" name="quantity" value="1">
+              <button type="submit" class="btn-fill" {% if not product.in_stock %}disabled{% endif %}>Add to Cart</button>
+            </form>
+            <form action="{% url 'add_to_cart' product.id %}" method="post">
+              {% csrf_token %}
+              <input type="hidden" name="quantity" value="1">
+              <input type="hidden" name="next" value="{% url 'checkout' %}">
+              <button type="submit" class="btn-outline" {% if not product.in_stock %}disabled{% endif %}>Buy Now</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    {% empty %}
+      <p>Abhi koi product available nahi hai. Admin panel se products add karein.</p>
+    {% endfor %}
+  </div>
+
+  <div class="see-more"><a href="{% url 'home' %}">See More Collections</a></div>
+</div>
+
+<div class="section" style="padding-bottom:20px;">
+  <div class="section-head">
+    <h2>Most Recommended Collections For You</h2>
+    <p>These items drop to timeless classics, built for style and comfort.</p>
+    <div class="rule"></div>
+  </div>
+
+  <div class="gallery">
+    <a class="gallery-tile tall" href="{% url 'category_page' 'shoes' %}">
+      <img src="https://picsum.photos/seed/gallery-main-v2/700/1000" alt="">
+      <div class="gallery-copy"><h4>Sneakers</h4><span>View all sneakers</span></div>
+    </a>
+    <a class="gallery-tile" href="{% url 'category_page' 'mobile-accessories' %}">
+      <img src="https://picsum.photos/seed/gallery-2-v2/700/500" alt="">
+      <div class="gallery-copy"><h4>Accessories</h4><span>View all</span></div>
+    </a>
+    <a class="gallery-tile" href="{% url 'category_page' 'watches' %}">
+      <img src="https://picsum.photos/seed/gallery-3-v2/700/500" alt="">
+      <div class="gallery-copy"><h4>Watches</h4><span>View all</span></div>
+    </a>
+  </div>
+</div>
+
+<div class="section" style="padding-top:0;">
+  <div class="trending">
+    <img src="https://picsum.photos/seed/trending-v2/1600/700" alt="">
+    <div class="trending-copy">
+      <h3>Trending Now</h3>
+      <a href="{% url 'home' %}">Explore Shop</a>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <div class="section-head">
+    <h2>Summer Collections</h2>
+    <p>These items drop to timeless classics, built for style and comfort.</p>
+    <div class="rule"></div>
+  </div>
+  <div class="grid">
+    {% for product in new_arrivals %}
+      <div class="card">
+        <span class="card-badge">NEW</span>
+        <a href="{{ product.get_absolute_url }}">
+          <div class="card-img">
+            {% if product.photo_url %}<img src="{{ product.photo_url }}" alt="{{ product.name }}">{% else %}{{ product.icon }}{% endif %}
+          </div>
+        </a>
+        <div class="card-body">
+          <span class="card-cat">{{ product.category.name }}</span>
+          <a href="{{ product.get_absolute_url }}" class="card-name">{{ product.name }}</a>
+          <span class="card-price">Rs {{ product.price }}</span>
+          <div class="btn-row">
+            <form action="{% url 'add_to_cart' product.id %}" method="post">
+              {% csrf_token %}
+              <input type="hidden" name="quantity" value="1">
+              <button type="submit" class="btn-fill" {% if not product.in_stock %}disabled{% endif %}>Add to Cart</button>
+            </form>
+            <form action="{% url 'add_to_cart' product.id %}" method="post">
+              {% csrf_token %}
+              <input type="hidden" name="quantity" value="1">
+              <input type="hidden" name="next" value="{% url 'checkout' %}">
+              <button type="submit" class="btn-outline" {% if not product.in_stock %}disabled{% endif %}>Buy Now</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    {% empty %}
+      <p style="grid-column:1/-1;text-align:center;color:var(--muted);">Abhi koi new arrival nahi hai.</p>
+    {% endfor %}
+  </div>
+  <div class="see-more"><a href="{% url 'home' %}">See More Collections</a></div>
+</div>
+
+<div class="section" style="padding-top:0;">
+  <div class="features">
+    <div><div class="ic">🚚</div><div class="ti">Free Shipping</div><div class="de">Rs 3000+ order par</div></div>
+    <div><div class="ic">🕐</div><div class="ti">24x7 Service</div><div class="de">Hamesha available</div></div>
+    <div><div class="ic">🎉</div><div class="ti">Festival Offer</div><div class="de">Season ki sale</div></div>
+    <div><div class="ic">💳</div><div class="ti">Online Payment</div><div class="de">Safe aur secure</div></div>
+  </div>
+</div>
+
+<div class="cta">
+  <img src="https://picsum.photos/seed/cta-v2/1600/700" alt="">
+  <div class="cta-copy">
+    <h2>Build Your Style With Confident Steps By Wearing Our Products.</h2>
+    <div class="cta-btns">
+      <a class="primary" href="{% url 'home' %}#shop">Shop Now</a>
+      <a class="secondary" href="{% url 'cart' %}">View Cart</a>
+    </div>
+  </div>
+</div>
+
+<script>
+let heroIndex = 0;
+const heroSlides = document.querySelectorAll('#heroCarousel .hero-slide');
+const heroDots = document.querySelectorAll('#heroDots .hero-dot');
+let heroTimer;
+function heroGo(i){
+  heroSlides[heroIndex].classList.remove('active');
+  heroDots[heroIndex].classList.remove('active');
+  heroIndex = (i + heroSlides.length) % heroSlides.length;
+  heroSlides[heroIndex].classList.add('active');
+  heroDots[heroIndex].classList.add('active');
+  resetHeroTimer();
+}
+function heroNext(){ heroGo(heroIndex + 1); }
+function heroPrev(){ heroGo(heroIndex - 1); }
+function resetHeroTimer(){ clearInterval(heroTimer); heroTimer = setInterval(() => heroGo(heroIndex + 1), 6000); }
+resetHeroTimer();
+
+(function(){
+  const target = new Date(); target.setDate(target.getDate() + 3);
+  function tick(){
+    const diff = target - new Date();
+    if(diff <= 0) return;
+    const d = Math.floor(diff/86400000), h = Math.floor((diff%86400000)/3600000);
+    const m = Math.floor((diff%3600000)/60000), s = Math.floor((diff%60000)/1000);
+    document.getElementById('cdD').textContent = String(d).padStart(2,'0');
+    document.getElementById('cdH').textContent = String(h).padStart(2,'0');
+    document.getElementById('cdM').textContent = String(m).padStart(2,'0');
+    document.getElementById('cdS').textContent = String(s).padStart(2,'0');
+  }
+  tick(); setInterval(tick, 1000);
+})();
+</script>
+
+{% endblock %}

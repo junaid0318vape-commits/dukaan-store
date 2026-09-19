@@ -1,0 +1,90 @@
+{% extends 'store/base.html' %}
+{% block title %}{{ product.name }}{% endblock %}
+{% block content %}
+
+<div class="container">
+  <div class="breadcrumb">
+    <a href="{% url 'home' %}">Home</a> /
+    <a href="{% url 'category_page' product.category.slug %}">{{ product.category.name }}</a> /
+    <span>{{ product.name }}</span>
+  </div>
+
+  <div class="pd-layout">
+    <div>
+      <div class="pd-gallery-main" id="pdMainImg">
+        {% if product.photo_url %}<img src="{{ product.photo_url }}" alt="{{ product.name }}">{% else %}{{ product.icon }}{% endif %}
+      </div>
+      {% if product.photo_url %}
+      <div class="pd-thumbs">
+        <div class="pd-thumb active" onclick="pdSetImg(this)" data-img="{{ product.photo_url }}"><img src="{{ product.photo_url }}" alt=""></div>
+        <div class="pd-thumb" onclick="pdSetImg(this)" data-img="{{ product.photo_url }}"><img src="{{ product.photo_url }}" alt=""></div>
+        <div class="pd-thumb" onclick="pdSetImg(this)" data-img="{{ product.photo_url }}"><img src="{{ product.photo_url }}" alt=""></div>
+      </div>
+      {% endif %}
+    </div>
+
+    <div>
+      <div class="pd-cat">{{ product.category.name }}</div>
+      <h1 class="pd-name">{{ product.name }}</h1>
+      <div class="pd-price">Rs {{ product.price }}</div>
+      {% if product.description %}<p class="pd-desc">{{ product.description }}</p>{% endif %}
+
+      {% if product.in_stock %}
+        <div class="pd-qty-row">
+          <span class="pd-qty-label">Quantity</span>
+          <div class="qty-stepper">
+            <button type="button" onclick="pdChangeQty(-1)">−</button>
+            <input type="number" id="pdQtyInput" value="1" min="1" readonly>
+            <button type="button" onclick="pdChangeQty(1)">+</button>
+          </div>
+        </div>
+
+        <div class="pd-stock">✔ In stock — {{ product.stock }} available</div>
+
+        <div class="pd-actions">
+          <form action="{% url 'add_to_cart' product.id %}" method="post" id="pdBuyForm">
+            {% csrf_token %}
+            <input type="hidden" name="quantity" id="pdQtyBuy" value="1">
+            <input type="hidden" name="next" value="{% url 'checkout' %}">
+            <button type="submit" class="btn-fill">Buy Now</button>
+          </form>
+          <form action="{% url 'add_to_cart' product.id %}" method="post" id="pdCartForm">
+            {% csrf_token %}
+            <input type="hidden" name="quantity" id="pdQtyCart" value="1">
+            <button type="submit" class="btn-outline">Add to Cart</button>
+          </form>
+        </div>
+      {% else %}
+        <div class="pd-stock low">✕ Out of stock</div>
+      {% endif %}
+
+      <div class="pd-delivery">
+        <div class="pd-delivery-item">
+          <span class="ic">🚚</span>
+          <div><div class="tt">Free Delivery</div><div class="dd">Rs 3000+ ke order par free shipping</div></div>
+        </div>
+        <div class="pd-delivery-item">
+          <span class="ic">↩️</span>
+          <div><div class="tt">Return Policy</div><div class="dd">7 din ke andar aasan return</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+function pdSetImg(el){
+  document.querySelectorAll('.pd-thumb').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('pdMainImg').innerHTML = `<img src="${el.dataset.img}" alt="">`;
+}
+function pdChangeQty(delta){
+  const input = document.getElementById('pdQtyInput');
+  let val = Math.max(1, parseInt(input.value || '1') + delta);
+  input.value = val;
+  document.getElementById('pdQtyBuy').value = val;
+  document.getElementById('pdQtyCart').value = val;
+}
+</script>
+
+{% endblock %}

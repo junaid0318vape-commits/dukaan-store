@@ -1,0 +1,25 @@
+{% extends 'store/base.html' %}
+{% block title %}Sign Up{% endblock %}
+{% block content %}
+
+<div style="max-width:360px;margin:0 auto;padding:24px 20px;">
+  <h1 style="color:#fff;">Sign Up</h1>
+  <form method="post">
+    {% csrf_token %}
+    {{ form.non_field_errors }}
+    <label>Username</label>
+    {{ form.username.errors }}{{ form.username }}
+    <label>Email (optional)</label>
+    {{ form.email }}
+    <label>Password</label>
+    {{ form.password1.errors }}{{ form.password1 }}
+    <label>Confirm Password</label>
+    {{ form.password2.errors }}{{ form.password2 }}
+    <button type="submit" class="btn-fill">Account Banayein</button>
+  </form>
+  <p style="margin-top:14px;font-size:14px;">
+    Ya <a href="{% url 'checkout' %}" style="color:var(--gold);font-weight:600;">guest ki tarah checkout karein</a> — login zaroori nahi.
+  </p>
+</div>
+
+{% endblock %}

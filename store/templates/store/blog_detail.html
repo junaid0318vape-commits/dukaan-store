@@ -1,0 +1,27 @@
+{% extends 'store/base.html' %}
+{% block title %}Blog — Dukaan{% endblock %}
+{% block content %}
+
+<div class="container">
+  <a href="{% url 'home' %}">&larr; Home</a>
+  <div class="blog-img" style="margin:16px 0;border-radius:12px;">⌚</div>
+  <div class="blog-meta" style="color:var(--muted);">By Dukaan Team • 26 January 2026</div>
+  <h1 style="margin:8px 0 16px;">Aapki wrist ke liye sahi watch kaise chunein</h1>
+  <p style="color:var(--muted); line-height:1.7; margin-bottom:16px;">
+    Watch khareedte waqt teen cheezein dhyan mein rakhein: sabse pehle apni
+    wrist size ke hisaab se sahi case size chunein — chhoti wrist ke liye
+    36-40mm aur bari wrist ke liye 42mm+ behtar rehta hai. Doosra, apna
+    lifestyle dekhein: agar aap active hain to fitness watch ya sports watch
+    behtar rahegi, aur formal use ke liye leather strap wali analog watch
+    zyada suit karti hai. Teesra, budget aur warranty zaroor check karein —
+    hamari saari watches par warranty available hai.
+  </p>
+  <p style="color:var(--muted); line-height:1.7;">
+    Aakhir mein, strap material bhi important hai — leather elegant lagta
+    hai lekin steel ya silicone roz mareez wear aur paani se bachne ke liye
+    zyada practical hote hain. Humari trending watches collection browse
+    karein aur apni pasand ki watch dhoondein.
+  </p>
+</div>
+
+{% endblock %}

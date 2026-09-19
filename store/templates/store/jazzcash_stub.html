@@ -1,0 +1,15 @@
+{% extends 'store/base.html' %}
+{% block title %}JazzCash Payment{% endblock %}
+{% block content %}
+
+<div style="text-align:center;padding:50px 20px;">
+  <h1>JazzCash Integration Point</h1>
+  <p style="color:var(--muted);max-width:480px;margin:0 auto;">
+    Order #{{ order.id }} (Rs {{ order.total_amount }}) is ready for JazzCash payment.
+    This is where your app would POST the secure-hash request to JazzCash's
+    Merchant API and redirect the customer to their payment page.
+    See README.md for the exact fields and hashing steps.
+  </p>
+</div>
+
+{% endblock %}

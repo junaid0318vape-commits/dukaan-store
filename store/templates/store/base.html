@@ -1,0 +1,108 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{% block title %}Dukaan{% endblock %}</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="{% static 'store/css/style.css' %}">
+</head>
+<body>
+
+<header>
+  <div class="nav-wrap">
+    <a class="logo" href="{% url 'home' %}">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 15c0-4 3-8 8-8 3 0 5 1.5 5 1.5S15 6 12 6C7 6 4 10 4 15Z"/><path d="M4 15c1.5 2 4 3 8 3s7-2 8-5"/></svg>
+      Dukaan
+    </a>
+
+    <nav class="nav-links">
+      <a href="{% url 'home' %}">Home</a>
+      <a href="{% url 'home' %}#shop">Shop</a>
+      {% for cat in nav_categories %}
+        <a href="{% url 'category_page' cat.slug %}">{{ cat.name }}</a>
+      {% endfor %}
+    </nav>
+
+    <div class="nav-icons">
+      <button class="icon-btn" onclick="toggleSearch()" aria-label="Search">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      </button>
+      {% if user.is_authenticated %}
+        <span class="user-line" style="font-size:13px;color:var(--muted);display:flex;align-items:center;gap:8px;">
+          {{ user.username }}
+          <form action="{% url 'logout' %}" method="post" style="margin:0;">{% csrf_token %}<button type="submit" style="background:none;border:none;color:var(--muted);font-weight:600;font-size:13px;cursor:pointer;padding:0;">Logout</button></form>
+        </span>
+      {% else %}
+        <a class="icon-btn" href="{% url 'login' %}" aria-label="Account">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-7 8-7s8 2.6 8 7"/></svg>
+        </a>
+      {% endif %}
+      <button class="icon-btn" onclick="alert('Wishlist feature jald aa raha hai!')" aria-label="Wishlist">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20.5s-7.5-4.6-9.6-9.2C1.1 8 2.6 5 5.7 4.4c2-.4 3.9.5 5 2.1 1.1-1.6 3-2.5 5-2.1C18.9 5 20.4 8 19.1 11.3 17 15.9 12 20.5 12 20.5Z"/></svg>
+      </button>
+      <a class="icon-btn cart-icon" href="{% url 'cart' %}" aria-label="Cart">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8h12l-1 12H7L6 8Z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/></svg>
+        <span class="cart-badge">{{ cart_item_count|default:0 }}</span>
+      </a>
+    </div>
+  </div>
+  <div class="search-drop" id="searchDrop">
+    <form action="{% url 'search' %}" method="get">
+      <input type="text" name="q" placeholder="Products dhoondein..." value="{{ request.GET.q }}">
+      <button type="submit">Search</button>
+    </form>
+  </div>
+</header>
+
+{% if messages %}
+<ul class="messages">
+  {% for message in messages %}<li>{{ message }}</li>{% endfor %}
+</ul>
+{% endif %}
+
+{% block content %}{% endblock %}
+
+<footer>
+  <div class="foot-grid">
+    <div class="foot-brand">
+      <div class="foot-logo">Dukaan</div>
+      <p>Hum quality shoes, watches aur mobile accessories bechte hain, poori diyanatdari aur behtareen customer service ke sath.</p>
+      <form class="newsletter-form" action="{% url 'newsletter_subscribe' %}" method="post">
+        {% csrf_token %}
+        <input type="email" name="email" placeholder="Apna email daalein" required>
+        <button type="submit">Subscribe</button>
+      </form>
+    </div>
+    <div class="foot-col">
+      <h4>Categories</h4>
+      {% for cat in nav_categories %}
+        <div><a href="{% url 'category_page' cat.slug %}">{{ cat.name }}</a></div>
+      {% endfor %}
+    </div>
+    <div class="foot-col">
+      <h4>Legal</h4>
+      <div><a href="#">Privacy Policy</a></div>
+      <div><a href="#">Terms &amp; Conditions</a></div>
+      <div><a href="#">Refund Policy</a></div>
+    </div>
+    <div class="foot-col">
+      <h4>Help</h4>
+      <div>📍 Lahore, Pakistan</div>
+      <div>📞 0300-1234567</div>
+      <div>✉️ support@dukaan.pk</div>
+    </div>
+  </div>
+  <div class="copyright">© 2026 Dukaan. Sab huqooq mehfooz hain.</div>
+</footer>
+
+<script>
+function toggleSearch(){
+  document.getElementById('searchDrop').classList.toggle('open');
+}
+</script>
+
+</body>
+</html>

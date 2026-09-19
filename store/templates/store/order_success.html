@@ -1,0 +1,20 @@
+{% extends 'store/base.html' %}
+{% block title %}Order Confirmed{% endblock %}
+{% block content %}
+
+<div style="text-align:center;padding:50px 20px;">
+  <div style="width:60px;height:60px;background:var(--gold);color:var(--teal-dark);border-radius:50%;
+              display:flex;align-items:center;justify-content:center;font-size:28px;margin:0 auto 16px;">✓</div>
+  <h1 style="color:#fff;">Order #{{ order.id }} Confirm Ho Gaya!</h1>
+  <p style="color:var(--muted);">
+    {% if order.payment_method == 'cod' %}
+      Cash on Delivery — payment order pohanchne par karein.
+    {% else %}
+      Payment mil gayi hai. Shukriya!
+    {% endif %}
+  </p>
+  <p style="font-weight:700;font-size:18px;margin-top:10px;color:#fff;">Total: Rs {{ order.total_amount }}</p>
+  <a href="{% url 'home' %}" class="btn-fill" style="margin-top:20px;display:inline-flex;width:auto;padding:0 28px;">Shopping Jari Rakhein</a>
+</div>
+
+{% endblock %}

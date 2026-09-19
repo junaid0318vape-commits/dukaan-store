@@ -1,0 +1,57 @@
+{% extends 'store/base.html' %}
+{% block title %}Checkout{% endblock %}
+{% block content %}
+
+<div class="container">
+<h1 style="color:#fff;margin-bottom:24px;">Checkout</h1>
+
+<div class="two-col">
+  <form method="post">
+    {% csrf_token %}
+    {{ form.non_field_errors }}
+
+    <label>Poora Naam</label>
+    {{ form.full_name.errors }}
+    {{ form.full_name }}
+
+    <label>Email (optional)</label>
+    {{ form.email.errors }}
+    {{ form.email }}
+
+    <label>Phone Number</label>
+    {{ form.phone.errors }}
+    {{ form.phone }}
+
+    <label>Delivery Address</label>
+    {{ form.address.errors }}
+    {{ form.address }}
+
+    <label>Shehar</label>
+    {{ form.city.errors }}
+    {{ form.city }}
+
+    <label>Payment Method</label>
+    {{ form.payment_method.errors }}
+    <div class="payment-choice">{{ form.payment_method }}</div>
+
+    <button type="submit" class="btn-fill" style="margin-top:14px;">Order Confirm Karein</button>
+  </form>
+
+  <div class="summary-card">
+    <h3 style="margin-top:0;color:#fff;">Order Summary</h3>
+    {% for item in cart_items %}
+      <div style="display:flex;justify-content:space-between;font-size:14px;margin-bottom:8px;color:var(--muted);">
+        <span>{{ item.product.name }} x {{ item.quantity }}</span>
+        <span>Rs {{ item.subtotal }}</span>
+      </div>
+    {% endfor %}
+    <hr style="border-color:var(--line);">
+    <div class="cart-total">
+      <span>Total</span>
+      <span>Rs {{ cart_total }}</span>
+    </div>
+  </div>
+</div>
+</div>
+
+{% endblock %}

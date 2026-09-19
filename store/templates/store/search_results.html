@@ -1,0 +1,42 @@
+{% extends 'store/base.html' %}
+{% block title %}Search — Dukaan{% endblock %}
+{% block content %}
+
+<div class="container">
+  <h1 style="color:#fff;margin-bottom:24px;">"{{ query }}" ke liye results</h1>
+
+  <div class="grid">
+    {% for product in products %}
+      <div class="card">
+        {% if product.is_new %}<span class="card-badge">NEW</span>{% endif %}
+        <a href="{{ product.get_absolute_url }}">
+          <div class="card-img">
+            {% if product.photo_url %}<img src="{{ product.photo_url }}" alt="{{ product.name }}">{% else %}{{ product.icon }}{% endif %}
+          </div>
+        </a>
+        <div class="card-body">
+          <span class="card-cat">{{ product.category.name }}</span>
+          <a href="{{ product.get_absolute_url }}" class="card-name">{{ product.name }}</a>
+          <span class="card-price">Rs {{ product.price }}</span>
+          <div class="btn-row">
+            <form action="{% url 'add_to_cart' product.id %}" method="post">
+              {% csrf_token %}
+              <input type="hidden" name="quantity" value="1">
+              <button type="submit" class="btn-fill" {% if not product.in_stock %}disabled{% endif %}>Add to Cart</button>
+            </form>
+            <form action="{% url 'add_to_cart' product.id %}" method="post">
+              {% csrf_token %}
+              <input type="hidden" name="quantity" value="1">
+              <input type="hidden" name="next" value="{% url 'checkout' %}">
+              <button type="submit" class="btn-outline" {% if not product.in_stock %}disabled{% endif %}>Buy Now</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    {% empty %}
+      <p>Koi product nahi mila.</p>
+    {% endfor %}
+  </div>
+</div>
+
+{% endblock %}
